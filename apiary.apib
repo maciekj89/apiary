@@ -1,0 +1,288 @@
+FORMAT: 1A
+HOST: https://services.adroll.com/api
+
+# NextRoll API
+
+NextRoll Inc. is a marketing and data technology company with a mission to accelerate growth for companies, big and small. Our proprietary data and machine learning powers data-driven marketing for over 37,000 customers. We empower growth through our three business units: AdRoll, a growth platform for ambitious DTC companies, RollWorks, an account-based platform for ambitious B2B companies, and NextRoll Platform Services, a marketing-technology-as-a-service offering that enables businesses the flexibility to build and enhance their marketing solutions. NextRoll Inc. is a privately-held company headquartered in San Francisco, CA
+
+NextRoll is headquartered in San Francisco, with offices in Boston, Chicago, Dublin, New York, Salt Lake City and Sydney.
+
+## Quickstart guide
+
+The NextRoll API is divided into [several services](https://developers.nextroll.com/docs/index.html#api-list), each with its own focus. Every API uses a common base URL and the authentication method. API parameters and responses can vary with each service, however we try to use consistent terminology across services. If you have any questions, you can [contact the API team](https://developers.nextroll.com/docs/support.html#support).
+
+### Register as a Developer
+
+To make API calls, you’ll need to register as developer and create an application:
+
+1. [Create a developer account](https://developers.nextroll.com/user/register)
+2. [Create an application](https://developers.nextroll.com/user/me/apps/add)
+
+It is recommended that you create an application for production and one for testing. This allows you to have a separate OAuth 2.0 redirect URI for each of your development environments.
+
+The default quota is 10,000 API requests per day. If you think you need your limit increased, [send us a message](https://developers.nextroll.com/docs/support.html#support).
+
+````
+Note:
+
+Once you’ve registered your application, you’ll see both a consumer key and secret. You’ll only use the consumer key when making API calls using HTTP Basic Access Authentication. You’ll use both key and secret when authenticating with OAuth 2.0.
+````
+
+### Base URL
+
+The base URL for all API calls is:
+```
+https://services.adroll.com
+```
+HTTPS is the only supported protocol.
+
+## Authentication
+
+### OAuth 2.0
+
+All API calls are authenticated using [OAuth 2.0](https://tools.ietf.org/html/rfc6749.html). For information on how to use OAuth 2.0 see [Get Started with OAuth 2.0](https://developers.nextroll.com/docs/guides/oauth.html#guide-oauth).
+
+### HTTP Basic Access Authentication
+
+Historically developers have been able to use [HTTP Basic Access Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication) to make API calls. This method is deprecated and we recommend using [OAuth 2.0](https://developers.nextroll.com/docs/guides/oauth.html#guide-oauth).
+
+When using HTTP Basic Access Authentication, use the same email address and password you use to sign into [the dashboard](https://app.adroll.com/). Please note to not use your Developer Site login in API calls as it is separate from a user account.
+
+For all requests, you’ll need to pass your application’s Client ID in the apikey query parameter. The apikey parameter is always sent in the URL’s query string, regardless of the HTTP method used. The apikey parameter should not be included in the body of the request for POST, PUT, or PATCH calls.
+
+## Terminology
+
++ Each **Organization** contains one or more Advertisables.
++ An **Advertisable** represents “a thing that can be advertised” such as a business or a particular product or service. Agencies generally have an Advertisable per client.
++ **Audiences** (aka **Segments**) represent sets of people who will be targeted or excluded from Campaigns. Example audience types include: Conversion, CRM, and URL.
++ **Ads** are the creative that are shown to target Audiences. Example **Ad** types include: Facebook, Static Web, and Dynamic Web.
++ **AdGroups** join together **Audiences** and **Ads**. The goal is to show targeted **Audiences** specific **Ads**.
++ **Campaigns** consist of one or more **AdGroups**.
++ Every **User** belongs to a single **Organization**. Depending on the user’s permissions, they may only have access to a subset of the **Advertisables** within that **Organization**. Currently we only offer full access to the account, we’re considering a read-only access in the future.
++ Each object is referred to by an **EID** (External ID) which consists of alphanumeric characters (e.g. 48F9EA2E5ACAEE24EB766F).
+
+## Your First API Call [/v1/organization/get?apikey={apikey}]
+
+### Retrieve organization information [GET]
+
+Fetch the details about a given organization.
+
++ Parameters
+    + apikey (required, string) - Required if using HTTP Basic Authentication. The value is the Client ID you received when you registered your application on the [NextRoll Developer site](https://developers.nextroll.com/)
+
++ Request
+    + Headers
+
+            Authorization: Basic 
+
++ Response 200 (application/json)
+    + Attributes (Organization)
+
+## Group Advertisables
+
+Resources related to advertisables in the API.
+
+## Create advertisable [/v1/advertisable/create?apikey={apikey}]
+
+Creates a new advertisable
+
++ Parameters
+    + apikey (required, string) - Required if using HTTP Basic Authentication. The value is the Client ID you received when you registered your application on the [NextRoll Developer site](https://developers.nextroll.com/)
+
+### Call [POST]
+
++ Request (application/x-www-form-urlencoded)
+    + Attributes
+        + name (required, string) - The name of the advertisable
+        + organization (required, string) - The EID of the organization who will own this advertisable. You need to own this organization
+        + set_as_default (optional, boolean) - Whether or not the created advertisable should be your new default advertisable
+        + url (optional, string) - The advertisable’s URL
+        + product_name (optional, string) - The advertisable’s specified product or brand
+        + country_code (optional, string) - The ISO‌-3166 2-Letter country code the company is based in. This field is used to handle data collection policies in different countries. If left blank, we will apply our most conservative rules
+    + Body
+    
+            name=Tes6&organization=FQ7ZEIW72JB25JVHPKZZNQ&country_code=us&url=http%3A%2F%2Ftest3.com
+    + Headers
+
+            Authorization: Basic 
+
++ Response 200 (application/json)
+    + Attributes (Advertisable)
+
+## Retrieve advertisable [/v1/advertisable/get?apikey={apikey}&advertisable={advertisable}]
+
+Retrieves advertisible with a given EID
+
++ Parameters
+    + apikey (required, string) - Required if using HTTP Basic Authentication. The value is the Client ID you received when you registered your application on the [NextRoll Developer site](https://developers.nextroll.com/)
+    + advertisable (required, string) - EID of the advertisable
+
+### Call [GET]
+
++ Request
+    + Headers
+
+            Authorization: Basic 
+
++ Response 200 (application/json)
+    + Attributes (Advertisable)
+
+## Retrieve pixel [/v1/advertisable/get_pixel?apikey={apikey}&advertisable={advertisable}]
+
+Retrieves pixel for a given advertisable
+
++ Parameters
+    + apikey (required, string) - Required if using HTTP Basic Authentication. The value is the Client ID you received when you registered your application on the [NextRoll Developer site](https://developers.nextroll.com/)
+    + advertisable (required, string) - EID of the advertisable
+
+### Call [GET]
+
++ Request
+    + Headers
+
+            Authorization: Basic 
+
++ Response 200 (application/json)
+    + Attributes (Pixel)
+
+## Group Campaigns
+
+Resources related to campaigns in the API.
+
+## Create campaign [/v1/campaign/create?apikey={apikey}]
+
+Creates a new campaign for a given advertisable
+
++ Parameters
+    + apikey (required, string) - Required if using HTTP Basic Authentication. The value is the Client ID you received when you registered your application on the [NextRoll Developer site](https://developers.nextroll.com/)
+
+### Call [POST]
+
++ Request (application/x-www-form-urlencoded)
+    + Attributes
+        + advertisable (required, string) - EID of the advertisable to which this campaign will belong
+        + budget (required, number) - The WEEKLY budget for the campaign
+        + ui_budget_daily (optional, boolean) - Whether or not this campaign should show a daily budget in the UI
+            + Default: true
+        + is_retargeting (optional, boolean) - Is this a retargeting campaign?
+            + Default: true
+        + is_fbx_newsfeed (optional, boolean) - Is this a Facebook newsfeed campaign?
+            + Default: false
+        + adgroups (optional, array[string]) - List of EIDs of adgroups to attach to this campaign
+        + cpc (optional, number) - The CPC goal for the campaign
+        + cpm (optional, number) - The CPM limit of the campaign, used in pricing model
+        + start_date (optional, string) - The day the campaign will start
+            + Default: "tomorrow"
+        + end_date (optional, string) - The day the campaign will end, exclusive
+        + name (optional, string) - The name of the campaign
+        + status: "admin_review, draft" (optional, string) - The status of the campaign
+            + Default: "admin_review"
+        + name (optional, string) - The name of the campaign
+        + max_cpm (optional, number) - The CPM limit for the networks, used in bidding
+        + networks: "f" (optional, string) - A string of letters representing which networks to set up initially
+
+    + Body
+    
+            advertisable=6SHGRDIZUBDXLHUG4YHFGC&name=Test+campaign&budget=30.5&start_date=2020-01-01
+
+    + Headers
+
+            Authorization: Basic 
+
++ Response 200 (application/json)
+    + Attributes (Campaign)
+
+## Retrieve campaign [/v1/campaign/get?apikey={apikey}&campaign={campaign}]
+
+Retrieves campaign with a given EID
+
++ Parameters
+    + apikey (required, string) - Required if using HTTP Basic Authentication. The value is the Client ID you received when you registered your application on the [NextRoll Developer site](https://developers.nextroll.com/)
+    + campaign (required, string) - EID of the campaign
+
+### Call [GET]
+
++ Request
+    + Headers
+
+            Authorization: Basic 
+
++ Response 200 (application/json)
+    + Attributes (Campaign)
+
+## Data structures
+### Organization (object)
++ created_date (string) - The date this organization was created
++ eid (string) - EID of the organization
++ name (number) - The name of this organization
+
+### Advertisable (object)
++ updated_date (string) - The date this advertisable was last updated (UTC)
++ liquidads (string) - The EID of this advertisable’s liquidads
++ company_phone (string) - The Phone Number of the advertisable’s company
++ has_privacy_policy (boolean) - site has privacy policy
++ attached_users (array) - The IDs of additional users allowed to access the advertisable
++ approval_state (string) - Auto approval state derived from /zvelo service and/or manually overridden
++ has_approved_consent_solution (boolean) - Whether or not advertisable has an approved Consent Banner solution
++ business_unit (string) - The Business Unit of the advertisable
++ iab1_category_name (number) - IAB1 Category Name
++ product_name (string) - The advertisable’s specified product or brand
++ status: 'admin_review', 'approved', 'rejected' (string) - The status of the advertisable
++ saleser (string) - The EID of this advertisable’s saleser
++ optimizer (string) - The EID of this advertisable’s optimizer
++ zvelo_category_name (string) - 3rd party service category name
++ ops (string) - The EID of this advertisable’s ops
++ iab_content_id (number) - IAB Content Category
++ click_through_conversion_window (number) - Duration of this advertisable’s click through conversion window in days
++ is_active (boolean) - Whether or not the advertisable is currently active
++ view_through_conversion_window (number) - Duration of this advertisable’s view through conversion window in days
++ cm_networks (string) - The set of networks for which cookiematching is enabled for the advertisable
++ zvelo_category_id (number) - 3rd party service we use to categorize sites for auto whitelisting
++ enable_customer_multi_dur_segs (boolean) - Whether or not the advertisable is allowed to create multiple duration segments
++ is_coop_approved (boolean) - Whether or not the advertisable has approved the data co-op terms of use
++ iab1_category_id (number) - IAB1 Category
++ name (string) - The name of the advertisable
++ url (string) - The advertisable’s URL
++ is_publisher (boolean) - Whether or not this advertisable is a publisher
++ iab2_category_id (number) - IAB2 Category
++ iab2_category_name (number)  - IAB2 Category Name
++ eid (string) - The EID of the advertisable
++ blacklisted_sites (array) - The list of blacklisted domains for the advertisable
++ created_date (string) - The date this advertisable was created (UTC)
++ organization (string) - The EID of this advertisable’s organization
+
+### Pixel (object)
++ status (string) - The status of the pixel
++ dropped_code_date (string) - Time the pixel was last dropped
++ code (string) - The HTML/Javascript snippet an advertiser should place on their site
++ placed_code_date (string) - Time the pixel was last placed
++ eid (string) - EID of the pixel
++ is_consistent (boolean) - Whether or not the pixel is consistent
+        
+### Campaign (object)
++ status (string) - The status of the campaign. One of [“admin_review”, “approved”, “rejected”, “cancelled”, “completed”].
++ is_pubgraph (boolean) -  Whether or not this is a publisher graph campaign.
++ spend_limit_until (string) - The date the campaign can resume spending after being limited by spendtracker (UTC). Can spend if none.
++ is_fbx_newsfeed (boolean) - Whether or not this campaign is configured for the Facebook Newsfeed
++ is_facebook (boolean) - Whether or not this campaign is configured for the Facebook network
++ is_retargeting (boolean) - Whether or not this campaign is a retargeting campaign
++ bid_strategy_target (string) - The Bid Strategy target of the campaign
++ start_date (string) - The date the campaign will start (UTC)
++ updated_date (string) - The date this campaign was last updated (UTC)
++ pricing_strategies (array) - Information about pricing strategies for each of this campaign’s active networks.
++ ui_budget_daily (boolean) - Whether or not this campaign is configured with a daily budget in the UI
++ end_date (string) - The date the campaign will end, exclusive (UTC)
++ created_date (string) - The date this campaign was created (UTC)
++ is_active (boolean) - Whether or not this campaign is currently active
++ is_fb_wca (boolean) - Whether or not this campaign is a Facebook WCA campaign
++ max_cpm (number) - The maximum CPM for this campaign
++ name (string) - The name of this campaign
++ advertisable (string) - EID of the advertisable to which this campaign belongs
++ cpm (number) - The CPM for this campaign
++ bid_strategy (string) - The Bid Strategy of the campaign
++ cpc (number) -  The CPC for this campaign
++ budget (number) - The WEEKLY budget of the campaign
++ is_coop (boolean) - Whether or not this is a coop (data sharing) campaign
++ eid (string) - EID of the campaign
++ adgroups (array) - List of EIDs of the adgroups attached to this campaign
++ is_apple (boolean) -  Whether or not this campaign is an Apple iAd campaign
